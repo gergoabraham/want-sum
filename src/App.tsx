@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Table } from './core/solver';
+import { Solutions, solve, Table } from './core/solver';
 
 const SIZE = 2;
+const MAX_STEPS = 5;
+
+type Target = {
+  value: number;
+  minSteps: number;
+};
 
 function App() {
   const [initialTable, setInitialTable] = useState<Table>([]);
+  const [target, setTarget] = useState<Target>();
 
   useEffect(() => {
     const table: Table = [];
@@ -17,12 +24,25 @@ function App() {
     }
 
     setInitialTable(table);
+
+    const solutions = solve(table, MAX_STEPS);
+    const possibleTargets: number[] = Object.keys(solutions).map((x) =>
+      Number(x)
+    );
+    const targetIndex = getRandom(0, possibleTargets.length - 1);
+    const target = possibleTargets[targetIndex];
+
+    setTarget({
+      value: target,
+      minSteps: solutions[target],
+    });
   }, []);
 
   return (
     <div>
       <div>want sum?</div>
       <div>{initialTable}</div>
+      <div>target: {target?.value}</div>
     </div>
   );
 }

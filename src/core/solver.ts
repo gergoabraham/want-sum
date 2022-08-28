@@ -1,8 +1,9 @@
 export type Table = number[][];
 export type Step = number[][];
+export type Solutions = { [key in number]: number };
 
 export const solve = (table: Table, maxStepCount = 10) => {
-  const solutions: { [key in number]: number } = {};
+  const solutions: Solutions = {};
 
   const recursive = (table: Table, stepCount = 0) => {
     if (stepCount > maxStepCount) return;
