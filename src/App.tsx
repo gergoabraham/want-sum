@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Solutions, solve, Table } from './core/solver';
+import { solve, Table } from './core/solver';
+
+import styles from './App.module.css';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -39,15 +41,23 @@ function App() {
   }, []);
 
   return (
-    <div>
-      <div>want sum?</div>
-      <div>{initialTable}</div>
-      <div>target: {target?.value}</div>
+    <div className={styles.container}>
+      <div className={styles.title}>want sum?</div>
+      <div className={styles.table}>
+        {initialTable.map((line, li) =>
+          line.map((cell, ci) => (
+            <div key={`${li}-${ci}`} className={styles.cell}>
+              <div>{cell}</div>
+            </div>
+          ))
+        )}
+      </div>
+      <div className={styles.target}>target: {target?.value}</div>
     </div>
   );
 }
 
 const getRandom = (min: number, max: number) =>
-  Math.floor((max - min + 1) * Math.random() + 1);
+  Math.floor((max - min + 1) * Math.random() + min);
 
 export default App;
