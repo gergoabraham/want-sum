@@ -43,8 +43,8 @@ function App() {
     });
   }, []);
 
-  const handlePointerDown = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
+  const handleTouchStart = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>) => {
       const startElement = (event.target as HTMLElement).closest(
         `.${styles.cell}`
       );
@@ -52,10 +52,15 @@ function App() {
         .split('-')
         .map((x) => Number(x));
 
-      const handlePointerUp = (event: PointerEvent) => {
-        const endElement = (event.target as HTMLElement)?.closest?.(
-          `.${styles.cell}`
+      const handleTouchEnd = (event: TouchEvent) => {
+        const changedTouch = event.changedTouches.item(0);
+        if (!changedTouch) return;
+
+        const element = document.elementFromPoint(
+          changedTouch.clientX,
+          changedTouch.clientY
         );
+        const endElement = element?.closest?.(`.${styles.cell}`);
 
         if (endElement) {
           const endCoordinates = endElement?.id
@@ -76,10 +81,10 @@ function App() {
           }
         }
 
-        window.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('touchend', handleTouchEnd);
       };
 
-      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('touchend', handleTouchEnd);
     },
     []
   );
@@ -91,7 +96,7 @@ function App() {
   return (
     <div className={styles.container}>
       <div className={styles.title}>want sum?</div>
-      <div className={styles.table} onPointerDown={handlePointerDown}>
+      <div className={styles.table} onTouchStart={handleTouchStart}>
         {table.map((line, li) =>
           line.map((cell, ci) => (
             <div id={`${li}-${ci}`} key={`${li}-${ci}`} className={styles.cell}>
