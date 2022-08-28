@@ -1,5 +1,5 @@
-type Table = number[][];
-type Step = number[][];
+export type Table = number[][];
+export type Step = number[][];
 
 export const solve = (table: Table, maxStepCount = 10) => {
   const solutions: { [key in number]: number } = {};
