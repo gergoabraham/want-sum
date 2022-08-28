@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/want-sum/static/css/main.69b11904.css",
+    "main.js": "/want-sum/static/js/main.16e1865a.js",
+    "static/js/787.1a130610.chunk.js": "/want-sum/static/js/787.1a130610.chunk.js",
+    "index.html": "/want-sum/index.html",
+    "main.69b11904.css.map": "/want-sum/static/css/main.69b11904.css.map",
+    "main.16e1865a.js.map": "/want-sum/static/js/main.16e1865a.js.map",
+    "787.1a130610.chunk.js.map": "/want-sum/static/js/787.1a130610.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.69b11904.css",
+    "static/js/main.16e1865a.js"
+  ]
+}
