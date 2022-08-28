@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { solve, Table } from './core/solver';
+import { performStep, solve, Step, Table } from './core/solver';
 
 import styles from './App.module.css';
+import { useCallback } from 'react';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -13,6 +14,7 @@ type Target = {
 
 function App() {
   const [initialTable, setInitialTable] = useState<Table>([]);
+  const [table, setTable] = useState<Table>([]);
   const [target, setTarget] = useState<Target>();
 
   useEffect(() => {
@@ -26,6 +28,7 @@ function App() {
     }
 
     setInitialTable(table);
+    setTable(table);
 
     const solutions = solve(table, MAX_STEPS);
     const possibleTargets: number[] = Object.keys(solutions).map((x) =>
@@ -40,13 +43,54 @@ function App() {
     });
   }, []);
 
+  const handlePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const startElement = (event.target as HTMLElement).closest(
+        `.${styles.cell}`
+      );
+      const startCoordinates = startElement!.id
+        .split('-')
+        .map((x) => Number(x));
+
+      const handlePointerUp = (event: PointerEvent) => {
+        const endElement = (event.target as HTMLElement)?.closest?.(
+          `.${styles.cell}`
+        );
+
+        if (endElement) {
+          const endCoordinates = endElement?.id
+            .split('-')
+            .map((x) => Number(x));
+
+          const isStepValid =
+            (startCoordinates[0] === endCoordinates[0] &&
+              startCoordinates[1] !== endCoordinates[1]) ||
+            (startCoordinates[1] === endCoordinates[1] &&
+              startCoordinates[0] !== endCoordinates[0]);
+
+          if (isStepValid) {
+            const step: Step = [startCoordinates, endCoordinates].sort(
+              (a, b) => 10 * (a[0] - b[0]) + a[1] - b[1]
+            );
+            setTable((table) => performStep(table, step));
+          }
+        }
+
+        window.removeEventListener('pointerup', handlePointerUp);
+      };
+
+      window.addEventListener('pointerup', handlePointerUp);
+    },
+    []
+  );
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>want sum?</div>
-      <div className={styles.table}>
-        {initialTable.map((line, li) =>
+      <div className={styles.table} onPointerDown={handlePointerDown}>
+        {table.map((line, li) =>
           line.map((cell, ci) => (
-            <div key={`${li}-${ci}`} className={styles.cell}>
+            <div id={`${li}-${ci}`} key={`${li}-${ci}`} className={styles.cell}>
               <div>{cell}</div>
             </div>
           ))

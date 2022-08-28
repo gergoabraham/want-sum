@@ -55,7 +55,7 @@ const steps = function* (rows: number, columns = rows) {
   }
 };
 
-const performStep = (table: Table, step: Step) => {
+export const performStep = (table: Table, step: Step) => {
   const sum = getSum(table, step);
 
   const newTable = table.map((row) => [...row]);
