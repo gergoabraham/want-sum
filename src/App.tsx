@@ -84,6 +84,10 @@ function App() {
     []
   );
 
+  const handleReset = () => {
+    setTable(initialTable);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>want sum?</div>
@@ -97,6 +101,7 @@ function App() {
         )}
       </div>
       <div className={styles.target}>target: {target?.value}</div>
+      <button onClick={handleReset}>reset</button>
     </div>
   );
 }
