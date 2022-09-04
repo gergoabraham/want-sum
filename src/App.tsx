@@ -102,7 +102,7 @@ function App() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ height: window.innerHeight }}>
       <div className={styles.title}>want sum?</div>
       <div className={styles.tableContainer}>
         <div className={styles.table} onTouchStart={handleTouchStart}>
