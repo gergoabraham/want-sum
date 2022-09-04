@@ -17,7 +17,7 @@ function App() {
   const [table, setTable] = useState<Table>([]);
   const [target, setTarget] = useState<Target>();
 
-  useEffect(() => {
+  const generateNewGame = () => {
     const table: Table = [];
 
     for (let i = 0; i < SIZE; i++) {
@@ -41,6 +41,10 @@ function App() {
       value: target,
       minSteps: solutions[target],
     });
+  };
+
+  useEffect(() => {
+    generateNewGame();
   }, []);
 
   const handleTouchStart = useCallback(
@@ -93,6 +97,10 @@ function App() {
     setTable(initialTable);
   };
 
+  const handleNewGame = () => {
+    generateNewGame();
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>want sum?</div>
@@ -112,7 +120,15 @@ function App() {
         </div>
       </div>
       <div className={styles.target}>target: {target?.value}</div>
-      <button onClick={handleReset}>reset</button>
+
+      <div className={styles.buttonContainer}>
+        <button onClick={handleNewGame} className={styles.button}>
+          new
+        </button>
+        <button onClick={handleReset} className={styles.button}>
+          reset
+        </button>
+      </div>
     </div>
   );
 }
