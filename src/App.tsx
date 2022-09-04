@@ -21,7 +21,7 @@ enum GameState {
 function App() {
   const [initialTable, setInitialTable] = useState<Table>([]);
   const [table, setTable] = useState<Table>([]);
-  const [target, setTarget] = useState<Target>();
+  const [target, setTarget] = useState<Target>({ value: 0, minSteps: 0 });
   const [gameState, setGameState] = useState(GameState.InProgress);
 
   const generateNewGame = () => {
@@ -97,11 +97,11 @@ function App() {
               .reduce((prev, num) => Math.max(prev, num));
             const isTargetReached = newTable
               .flat()
-              .every((num) => num === target?.value);
+              .every((num) => num === target.value);
 
             if (isTargetReached) {
               setGameState(GameState.Won);
-            } else if (target?.value && largestNumber > target.value) {
+            } else if (target.value && largestNumber > target.value) {
               setGameState(GameState.GameOver);
             }
 
@@ -114,7 +114,7 @@ function App() {
 
       window.addEventListener('touchend', handleTouchEnd);
     },
-    [table, target?.value]
+    [table, target.value]
   );
 
   const handleReset = () => {
@@ -143,7 +143,7 @@ function App() {
           ))
         )}
       </div>
-      <div className={styles.target}>target: {target?.value}</div>
+      <div className={styles.target}>target: {target.value}</div>
 
       <div className={styles.buttonContainer}>
         <button onClick={handleNewGame} className={styles.button}>
