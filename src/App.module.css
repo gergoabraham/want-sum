@@ -12,8 +12,8 @@
 }
 
 .table {
-  width: 60vw;
-  height: 60vw;
+  width: min(60vw, 40vh);
+  height: min(60vw, 40vh);
 
   display: grid;
   grid-template-columns: 1fr 1fr;
