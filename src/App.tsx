@@ -149,7 +149,12 @@ function App() {
       >
         {table.map((line, li) =>
           line.map((cell, ci) => (
-            <div id={`${li}-${ci}`} key={`${li}-${ci}`} className={styles.cell}>
+            <div
+              id={`${li}-${ci}`}
+              key={`${li}-${ci}`}
+              className={styles.cell}
+              style={{ opacity: gameState !== GameState.InProgress ? 0.3 : 1 }}
+            >
               <div>{cell}</div>
             </div>
           ))
