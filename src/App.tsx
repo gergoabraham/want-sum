@@ -129,6 +129,18 @@ function App() {
   return (
     <div className={styles.container} style={{ height: window.innerHeight }}>
       <div className={styles.title}>want sum?</div>
+
+      <div className={styles.buttonContainer}>
+        <button onClick={handleNewGame} className={styles.button}>
+          new
+        </button>
+        <button onClick={handleReset} className={styles.button}>
+          reset
+        </button>
+      </div>
+
+      <div className={styles.target}>target: {target.value}</div>
+
       <div
         className={styles.table}
         onTouchStart={
@@ -142,16 +154,6 @@ function App() {
             </div>
           ))
         )}
-      </div>
-      <div className={styles.target}>target: {target.value}</div>
-
-      <div className={styles.buttonContainer}>
-        <button onClick={handleNewGame} className={styles.button}>
-          new
-        </button>
-        <button onClick={handleReset} className={styles.button}>
-          reset
-        </button>
       </div>
 
       <div className={styles.gameStateContainer}>
