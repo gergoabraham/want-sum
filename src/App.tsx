@@ -158,7 +158,7 @@ function App() {
 
       <div className={styles.gameStateContainer}>
         {gameState === GameState.Won && <div>you won</div>}
-        {gameState === GameState.GameOver && <div>you lose</div>}
+        {gameState === GameState.GameOver && <div>you lost</div>}
       </div>
     </div>
   );
