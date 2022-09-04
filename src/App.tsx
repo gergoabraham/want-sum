@@ -12,10 +12,17 @@ type Target = {
   minSteps: number;
 };
 
+enum GameState {
+  InProgress,
+  GameOver,
+  Won,
+}
+
 function App() {
   const [initialTable, setInitialTable] = useState<Table>([]);
   const [table, setTable] = useState<Table>([]);
   const [target, setTarget] = useState<Target>();
+  const [gameState, setGameState] = useState(GameState.InProgress);
 
   const generateNewGame = () => {
     const table: Table = [];
@@ -41,6 +48,8 @@ function App() {
       value: target,
       minSteps: solutions[target],
     });
+
+    setGameState(GameState.InProgress);
   };
 
   useEffect(() => {
@@ -81,7 +90,22 @@ function App() {
             const step: Step = [startCoordinates, endCoordinates].sort(
               (a, b) => 10 * (a[0] - b[0]) + a[1] - b[1]
             );
-            setTable((table) => performStep(table, step));
+
+            const newTable = performStep(table, step);
+            const largestNumber = newTable
+              .flat()
+              .reduce((prev, num) => Math.max(prev, num));
+            const isTargetReached = newTable
+              .flat()
+              .every((num) => num === target?.value);
+
+            if (isTargetReached) {
+              setGameState(GameState.Won);
+            } else if (target?.value && largestNumber > target.value) {
+              setGameState(GameState.GameOver);
+            }
+
+            setTable(newTable);
           }
         }
 
@@ -90,11 +114,12 @@ function App() {
 
       window.addEventListener('touchend', handleTouchEnd);
     },
-    []
+    [table, target?.value]
   );
 
   const handleReset = () => {
     setTable(initialTable);
+    setGameState(GameState.InProgress);
   };
 
   const handleNewGame = () => {
@@ -104,20 +129,19 @@ function App() {
   return (
     <div className={styles.container} style={{ height: window.innerHeight }}>
       <div className={styles.title}>want sum?</div>
-      <div className={styles.tableContainer}>
-        <div className={styles.table} onTouchStart={handleTouchStart}>
-          {table.map((line, li) =>
-            line.map((cell, ci) => (
-              <div
-                id={`${li}-${ci}`}
-                key={`${li}-${ci}`}
-                className={styles.cell}
-              >
-                <div>{cell}</div>
-              </div>
-            ))
-          )}
-        </div>
+      <div
+        className={styles.table}
+        onTouchStart={
+          gameState === GameState.InProgress ? handleTouchStart : undefined
+        }
+      >
+        {table.map((line, li) =>
+          line.map((cell, ci) => (
+            <div id={`${li}-${ci}`} key={`${li}-${ci}`} className={styles.cell}>
+              <div>{cell}</div>
+            </div>
+          ))
+        )}
       </div>
       <div className={styles.target}>target: {target?.value}</div>
 
@@ -128,6 +152,11 @@ function App() {
         <button onClick={handleReset} className={styles.button}>
           reset
         </button>
+      </div>
+
+      <div className={styles.gameStateContainer}>
+        {gameState === GameState.Won && <div>You won!</div>}
+        {gameState === GameState.GameOver && <div>You lose!</div>}
       </div>
     </div>
   );

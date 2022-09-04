@@ -5,20 +5,12 @@
   justify-content: space-around;
 
   box-sizing: border-box;
+  touch-action: none;
 }
 
 .title {
   font-size: 2em;
   font-weight: 700;
-}
-
-.tableContainer {
-  touch-action: none;
-  width: 100vw;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .table {
@@ -62,4 +54,8 @@
 
   border: none;
   background-color: lightgreen;
+}
+
+.gameStateContainer {
+  height: 3em;
 }
