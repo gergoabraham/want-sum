@@ -96,14 +96,20 @@ function App() {
   return (
     <div className={styles.container}>
       <div className={styles.title}>want sum?</div>
-      <div className={styles.table} onTouchStart={handleTouchStart}>
-        {table.map((line, li) =>
-          line.map((cell, ci) => (
-            <div id={`${li}-${ci}`} key={`${li}-${ci}`} className={styles.cell}>
-              <div>{cell}</div>
-            </div>
-          ))
-        )}
+      <div className={styles.tableContainer}>
+        <div className={styles.table} onTouchStart={handleTouchStart}>
+          {table.map((line, li) =>
+            line.map((cell, ci) => (
+              <div
+                id={`${li}-${ci}`}
+                key={`${li}-${ci}`}
+                className={styles.cell}
+              >
+                <div>{cell}</div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
       <div className={styles.target}>target: {target?.value}</div>
       <button onClick={handleReset}>reset</button>
