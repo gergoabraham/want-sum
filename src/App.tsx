@@ -106,6 +106,10 @@ function App() {
     const startElement = (event.target as HTMLElement).closest(
       `.${styles.cell}`
     );
+    if (!startElement) {
+      return null;
+    }
+
     const startCoordinates = startElement!.id.split('-').map((x) => Number(x));
 
     return startCoordinates;
@@ -114,6 +118,9 @@ function App() {
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
       const startCoordinates = getStartCoordinates(event);
+      if (!startCoordinates) {
+        return;
+      }
 
       const handleTouchEnd = (event: TouchEvent) => {
         window.removeEventListener('touchend', handleTouchEnd);
@@ -138,11 +145,14 @@ function App() {
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       const startCoordinates = getStartCoordinates(event);
+      if (!startCoordinates) {
+        return;
+      }
 
       const handleMouseUp = (event: MouseEvent) => {
         window.removeEventListener('mouseup', handleMouseUp);
 
-        const endElement = (event.target as HTMLElement).closest(
+        const endElement = (event.target as HTMLElement)?.closest?.(
           `.${styles.cell}`
         );
 
