@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { performStep, solve, Step, Table } from './core/solver';
+import {
+  performStep as applyStepOnTable,
+  solve,
+  Step,
+  Table,
+} from './core/solver';
 
 import styles from './App.module.css';
 import { useCallback } from 'react';
@@ -56,16 +61,63 @@ function App() {
     generateNewGame();
   }, []);
 
+  const performStep = useCallback(
+    (startCoordinates: number[], endElement: Element | null | undefined) => {
+      if (!endElement) {
+        return;
+      }
+
+      const endCoordinates = endElement?.id.split('-').map((x) => Number(x));
+
+      const isStepValid =
+        (startCoordinates[0] === endCoordinates[0] &&
+          startCoordinates[1] !== endCoordinates[1]) ||
+        (startCoordinates[1] === endCoordinates[1] &&
+          startCoordinates[0] !== endCoordinates[0]);
+
+      if (isStepValid) {
+        const step: Step = [startCoordinates, endCoordinates].sort(
+          (a, b) => 10 * (a[0] - b[0]) + a[1] - b[1]
+        );
+
+        const newTable = applyStepOnTable(table, step);
+        const largestNumber = newTable
+          .flat()
+          .reduce((prev, num) => Math.max(prev, num));
+        const isTargetReached = newTable
+          .flat()
+          .every((num) => num === target.value);
+
+        if (isTargetReached) {
+          setGameState(GameState.Won);
+        } else if (target.value && largestNumber > target.value) {
+          setGameState(GameState.GameOver);
+        }
+
+        setTable(newTable);
+      }
+    },
+    [table, target.value]
+  );
+
+  const getStartCoordinates = (
+    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+  ) => {
+    const startElement = (event.target as HTMLElement).closest(
+      `.${styles.cell}`
+    );
+    const startCoordinates = startElement!.id.split('-').map((x) => Number(x));
+
+    return startCoordinates;
+  };
+
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
-      const startElement = (event.target as HTMLElement).closest(
-        `.${styles.cell}`
-      );
-      const startCoordinates = startElement!.id
-        .split('-')
-        .map((x) => Number(x));
+      const startCoordinates = getStartCoordinates(event);
 
       const handleTouchEnd = (event: TouchEvent) => {
+        window.removeEventListener('touchend', handleTouchEnd);
+
         const changedTouch = event.changedTouches.item(0);
         if (!changedTouch) return;
 
@@ -75,46 +127,31 @@ function App() {
         );
         const endElement = element?.closest?.(`.${styles.cell}`);
 
-        if (endElement) {
-          const endCoordinates = endElement?.id
-            .split('-')
-            .map((x) => Number(x));
-
-          const isStepValid =
-            (startCoordinates[0] === endCoordinates[0] &&
-              startCoordinates[1] !== endCoordinates[1]) ||
-            (startCoordinates[1] === endCoordinates[1] &&
-              startCoordinates[0] !== endCoordinates[0]);
-
-          if (isStepValid) {
-            const step: Step = [startCoordinates, endCoordinates].sort(
-              (a, b) => 10 * (a[0] - b[0]) + a[1] - b[1]
-            );
-
-            const newTable = performStep(table, step);
-            const largestNumber = newTable
-              .flat()
-              .reduce((prev, num) => Math.max(prev, num));
-            const isTargetReached = newTable
-              .flat()
-              .every((num) => num === target.value);
-
-            if (isTargetReached) {
-              setGameState(GameState.Won);
-            } else if (target.value && largestNumber > target.value) {
-              setGameState(GameState.GameOver);
-            }
-
-            setTable(newTable);
-          }
-        }
-
-        window.removeEventListener('touchend', handleTouchEnd);
+        performStep(startCoordinates, endElement);
       };
 
       window.addEventListener('touchend', handleTouchEnd);
     },
-    [table, target.value]
+    [performStep]
+  );
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      const startCoordinates = getStartCoordinates(event);
+
+      const handleMouseUp = (event: MouseEvent) => {
+        window.removeEventListener('mouseup', handleMouseUp);
+
+        const endElement = (event.target as HTMLElement).closest(
+          `.${styles.cell}`
+        );
+
+        performStep(startCoordinates, endElement);
+      };
+
+      window.addEventListener('mouseup', handleMouseUp);
+    },
+    [performStep]
   );
 
   const handleReset = () => {
@@ -143,6 +180,9 @@ function App() {
 
       <div
         className={styles.table}
+        onMouseDown={
+          gameState === GameState.InProgress ? handleMouseDown : undefined
+        }
         onTouchStart={
           gameState === GameState.InProgress ? handleTouchStart : undefined
         }
