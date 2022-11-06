@@ -8,7 +8,7 @@ export const solve = (table: Table, maxStepCount = 10) => {
   const recursive = (table: Table, stepCount = 0) => {
     if (stepCount > maxStepCount) return;
 
-    if (hasReachFinalState(table)) {
+    if (hasReachedFinalState(table)) {
       const result = table[0][0];
 
       if (solutions[result]) {
@@ -56,7 +56,7 @@ const steps = function* (rows: number, columns = rows) {
 };
 
 export const performStep = (table: Table, step: Step) => {
-  const sum = getSum(table, step);
+  const sum = getSumForStep(table, step);
 
   const newTable = table.map((row) => [...row]);
 
@@ -69,7 +69,7 @@ export const performStep = (table: Table, step: Step) => {
   return newTable;
 };
 
-const getSum = (table: Table, step: Step) => {
+const getSumForStep = (table: Table, step: Step) => {
   let sum = 0;
   for (let row = step[0][0]; row <= step[1][0]; row++) {
     for (let col = step[0][1]; col <= step[1][1]; col++) {
@@ -80,7 +80,7 @@ const getSum = (table: Table, step: Step) => {
   return sum;
 };
 
-const hasReachFinalState = (table: Table) => {
+const hasReachedFinalState = (table: Table) => {
   const first = table[0][0];
 
   return table.reduce(
