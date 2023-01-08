@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { performStep as applyStepOnTable } from './core/solver';
+import { performStep } from './core/solver';
 
 import styled from 'styled-components';
 import { useCallback } from 'react';
-import Cell from './components/Cell';
 import {
   generateRandomTableWithSolutions,
   isStepValid,
   isTargetReached,
 } from './core/helper';
 import { Step, GameTable } from './core/types';
+import Table from './components/Table/Table';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -38,19 +38,6 @@ const Container = styled.div`
 const Title = styled.div`
   font-size: 2em;
   font-weight: 700;
-`;
-
-const TableComponent = styled.div`
-  width: min(60vw, 40vh);
-  height: min(60vw, 40vh);
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 5px;
-
-  text-align: center;
-  font-size: 2em;
 `;
 
 const TargetComponent = styled.div`
@@ -100,20 +87,14 @@ function App() {
     generateNewGame();
   }, []);
 
-  const performStep = useCallback(
-    (startCoordinates: number[], endElement: Element | null | undefined) => {
-      if (!endElement) {
-        return;
-      }
-
-      const endCoordinates = endElement?.id.split('-').map((x) => Number(x));
-
+  const handleStepEntered = useCallback(
+    (startCoordinates: number[], endCoordinates: number[]) => {
       if (isStepValid(startCoordinates, endCoordinates)) {
         const step: Step = [startCoordinates, endCoordinates].sort(
           (a, b) => a[0] - b[0] || a[1] - b[1]
         );
 
-        const newTable = applyStepOnTable(table, step);
+        const newTable = performStep(table, step);
         const largestNumber = newTable
           .flat()
           .reduce((prev, num) => Math.max(prev, num));
@@ -128,70 +109,6 @@ function App() {
       }
     },
     [table, target.value]
-  );
-
-  const getStartCoordinates = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
-    const startElement = (event.target as HTMLElement).closest(
-      '[data-cell="true"]'
-    );
-    if (!startElement) {
-      return null;
-    }
-
-    const startCoordinates = startElement.id.split('-').map((x) => Number(x));
-
-    return startCoordinates;
-  };
-
-  const handleTouchStart = useCallback(
-    (event: React.TouchEvent<HTMLDivElement>) => {
-      const startCoordinates = getStartCoordinates(event);
-      if (!startCoordinates) {
-        return;
-      }
-
-      const handleTouchEnd = (event: TouchEvent) => {
-        window.removeEventListener('touchend', handleTouchEnd);
-
-        const changedTouch = event.changedTouches.item(0);
-        if (!changedTouch) return;
-
-        const element = document.elementFromPoint(
-          changedTouch.clientX,
-          changedTouch.clientY
-        );
-        const endElement = element?.closest?.('[data-cell="true"]');
-
-        performStep(startCoordinates, endElement);
-      };
-
-      window.addEventListener('touchend', handleTouchEnd);
-    },
-    [performStep]
-  );
-
-  const handleMouseDown = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      const startCoordinates = getStartCoordinates(event);
-      if (!startCoordinates) {
-        return;
-      }
-
-      const handleMouseUp = (event: MouseEvent) => {
-        window.removeEventListener('mouseup', handleMouseUp);
-
-        const endElement = (event.target as HTMLElement)?.closest?.(
-          '[data-cell="true"]'
-        );
-
-        performStep(startCoordinates, endElement);
-      };
-
-      window.addEventListener('mouseup', handleMouseUp);
-    },
-    [performStep]
   );
 
   const handleReset = () => {
@@ -214,26 +131,11 @@ function App() {
 
       <TargetComponent>target: {target.value}</TargetComponent>
 
-      <TableComponent
-        onMouseDown={
-          gameState === GameState.InProgress ? handleMouseDown : undefined
-        }
-        onTouchStart={
-          gameState === GameState.InProgress ? handleTouchStart : undefined
-        }
-      >
-        {table.map((line, rowIndex) =>
-          line.map((cellValue, columnIndex) => (
-            <Cell
-              key={`${rowIndex}-${columnIndex}`}
-              rowIndex={rowIndex}
-              columnIndex={columnIndex}
-              isDimmed={gameState !== GameState.InProgress}
-              value={cellValue}
-            />
-          ))
-        )}
-      </TableComponent>
+      <Table
+        table={table}
+        isDisabled={gameState !== GameState.InProgress}
+        onStepEntered={handleStepEntered}
+      />
 
       <GameStateContainer>
         {gameState === GameState.Won && <div>you won</div>}
