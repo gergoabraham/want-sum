@@ -6,7 +6,7 @@ import {
   Table,
 } from './core/solver';
 
-import styles from './App.module.css';
+import styled from 'styled-components';
 import { useCallback } from 'react';
 import Cell from './components/Cell';
 
@@ -23,6 +23,62 @@ enum GameState {
   GameOver,
   Won,
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+
+  box-sizing: border-box;
+  touch-action: none;
+`;
+
+const Title = styled.div`
+  font-size: 2em;
+  font-weight: 700;
+`;
+
+const TableComponent = styled.div`
+  width: min(60vw, 40vh);
+  height: min(60vw, 40vh);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 5px;
+
+  text-align: center;
+  font-size: 2em;
+`;
+
+const TargetComponent = styled.div`
+  font-weight: 700;
+`;
+
+const ButtonContainer = styled.div`
+  width: 100vw;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+`;
+
+const Button = styled.button`
+  height: 5em;
+  width: 5em;
+
+  font-size: 1em;
+
+  border: none;
+  background-color: lightgreen;
+
+  cursor: pointer;
+`;
+
+const GameStateContainer = styled.div`
+  font-size: 2em;
+  height: 3em;
+`;
 
 function App() {
   const [initialTable, setInitialTable] = useState<Table>([]);
@@ -175,22 +231,17 @@ function App() {
   };
 
   return (
-    <div className={styles.container} style={{ height: window.innerHeight }}>
-      <div className={styles.title}>want sum?</div>
+    <Container style={{ height: window.innerHeight }}>
+      <Title>want sum?</Title>
 
-      <div className={styles.buttonContainer}>
-        <button onClick={handleNewGame} className={styles.button}>
-          new
-        </button>
-        <button onClick={handleReset} className={styles.button}>
-          reset
-        </button>
-      </div>
+      <ButtonContainer>
+        <Button onClick={handleNewGame}>new</Button>
+        <Button onClick={handleReset}>reset</Button>
+      </ButtonContainer>
 
-      <div className={styles.target}>target: {target.value}</div>
+      <TargetComponent>target: {target.value}</TargetComponent>
 
-      <div
-        className={styles.table}
+      <TableComponent
         onMouseDown={
           gameState === GameState.InProgress ? handleMouseDown : undefined
         }
@@ -209,13 +260,13 @@ function App() {
             />
           ))
         )}
-      </div>
+      </TableComponent>
 
-      <div className={styles.gameStateContainer}>
+      <GameStateContainer>
         {gameState === GameState.Won && <div>you won</div>}
         {gameState === GameState.GameOver && <div>you lost</div>}
-      </div>
-    </div>
+      </GameStateContainer>
+    </Container>
   );
 }
 

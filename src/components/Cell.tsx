@@ -1,4 +1,4 @@
-import styles from './Cell.module.css';
+import styled from 'styled-components';
 
 interface CellProps {
   rowIndex: number;
@@ -7,17 +7,32 @@ interface CellProps {
   isDimmed: boolean;
 }
 
+interface StyledCellProps {
+  isDimmed: boolean;
+}
+
+const StyledCell = styled.div<StyledCellProps>`
+  border: 1px gray solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  user-select: none;
+  cursor: pointer;
+
+  opacity: ${({ isDimmed }) => (isDimmed ? 0.3 : 1)};
+`;
+
 const Cell = ({ rowIndex, columnIndex, value, isDimmed }: CellProps) => {
   return (
-    <div
+    <StyledCell
       id={`${rowIndex}-${columnIndex}`}
       key={`${rowIndex}-${columnIndex}`}
-      className={styles.cell}
-      style={{ opacity: isDimmed ? 0.3 : 1 }}
       data-cell={true}
+      isDimmed={isDimmed}
     >
       <div>{value}</div>
-    </div>
+    </StyledCell>
   );
 };
 
