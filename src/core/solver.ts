@@ -1,6 +1,4 @@
-export type Table = number[][];
-export type Step = number[][];
-export type Solutions = { [key in number]: number };
+import { Solutions, Step, Table } from './types';
 
 export const solve = (table: Table, maxStepCount = 10) => {
   const solutions: Solutions = {};
@@ -8,7 +6,7 @@ export const solve = (table: Table, maxStepCount = 10) => {
   const recursive = (table: Table, stepCount = 0) => {
     if (stepCount > maxStepCount) return;
 
-    if (hasReachedFinalState(table)) {
+    if (hasReachedAPossibleFinalState(table)) {
       const result = table[0][0];
 
       if (solutions[result]) {
@@ -80,6 +78,5 @@ const getSumForStep = (table: Table, step: Step) => {
   return sum;
 };
 
-const hasReachedFinalState = (table: Table) => {
-  return table.flat().every((num) => num === table[0][0]);
-};
+const hasReachedAPossibleFinalState = (table: Table) =>
+  table.flat().every((num) => num === table[0][0]);

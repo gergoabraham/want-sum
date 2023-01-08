@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import {
-  performStep as applyStepOnTable,
-  solve,
-  Step,
-  Table,
-} from './core/solver';
+import { performStep as applyStepOnTable } from './core/solver';
 
 import styled from 'styled-components';
 import { useCallback } from 'react';
 import Cell from './components/Cell';
+import {
+  generateRandomTableWithSolutions,
+  isStepValid,
+  isTargetReached,
+} from './core/helper';
+import { Step, Table } from './core/types';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -87,30 +88,11 @@ function App() {
   const [gameState, setGameState] = useState(GameState.InProgress);
 
   const generateNewGame = () => {
-    const table: Table = [];
-
-    for (let i = 0; i < SIZE; i++) {
-      table[i] = [];
-      for (let j = 0; j < SIZE; j++) {
-        table[i][j] = getRandom(1, 4);
-      }
-    }
+    const { table, target } = generateRandomTableWithSolutions(SIZE, MAX_STEPS);
 
     setInitialTable(table);
     setTable(table);
-
-    const solutions = solve(table, MAX_STEPS);
-    const possibleTargets: number[] = Object.keys(solutions).map((x) =>
-      Number(x)
-    );
-    const targetIndex = getRandom(0, possibleTargets.length - 1);
-    const target = possibleTargets[targetIndex];
-
-    setTarget({
-      value: target,
-      minSteps: solutions[target],
-    });
-
+    setTarget(target);
     setGameState(GameState.InProgress);
   };
 
@@ -126,13 +108,7 @@ function App() {
 
       const endCoordinates = endElement?.id.split('-').map((x) => Number(x));
 
-      const isStepValid =
-        (startCoordinates[0] === endCoordinates[0] &&
-          startCoordinates[1] !== endCoordinates[1]) ||
-        (startCoordinates[1] === endCoordinates[1] &&
-          startCoordinates[0] !== endCoordinates[0]);
-
-      if (isStepValid) {
+      if (isStepValid(startCoordinates, endCoordinates)) {
         const step: Step = [startCoordinates, endCoordinates].sort(
           (a, b) => a[0] - b[0] || a[1] - b[1]
         );
@@ -141,11 +117,8 @@ function App() {
         const largestNumber = newTable
           .flat()
           .reduce((prev, num) => Math.max(prev, num));
-        const isTargetReached = newTable
-          .flat()
-          .every((num) => num === target.value);
 
-        if (isTargetReached) {
+        if (isTargetReached(newTable, target.value)) {
           setGameState(GameState.Won);
         } else if (target.value && largestNumber > target.value) {
           setGameState(GameState.GameOver);
@@ -269,8 +242,5 @@ function App() {
     </Container>
   );
 }
-
-const getRandom = (min: number, max: number) =>
-  Math.floor((max - min + 1) * Math.random() + min);
 
 export default App;
