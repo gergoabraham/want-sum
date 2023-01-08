@@ -77,7 +77,7 @@ function App() {
 
       if (isStepValid) {
         const step: Step = [startCoordinates, endCoordinates].sort(
-          (a, b) => 10 * (a[0] - b[0]) + a[1] - b[1]
+          (a, b) => a[0] - b[0] || a[1] - b[1]
         );
 
         const newTable = applyStepOnTable(table, step);
@@ -110,7 +110,7 @@ function App() {
       return null;
     }
 
-    const startCoordinates = startElement!.id.split('-').map((x) => Number(x));
+    const startCoordinates = startElement.id.split('-').map((x) => Number(x));
 
     return startCoordinates;
   };

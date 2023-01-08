@@ -81,11 +81,5 @@ const getSumForStep = (table: Table, step: Step) => {
 };
 
 const hasReachedFinalState = (table: Table) => {
-  const first = table[0][0];
-
-  return table.reduce(
-    (prev, currRow) =>
-      prev && currRow.reduce((prev, cell) => prev && cell === first, true),
-    true
-  );
+  return table.flat().every((num) => num === table[0][0]);
 };
