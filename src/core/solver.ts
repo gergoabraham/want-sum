@@ -1,9 +1,9 @@
-import { Solutions, Step, Table } from './types';
+import { Solutions, Step, GameTable } from './types';
 
-export const solve = (table: Table, maxStepCount = 10) => {
+export const solve = (table: GameTable, maxStepCount = 10) => {
   const solutions: Solutions = {};
 
-  const recursive = (table: Table, stepCount = 0) => {
+  const recursive = (table: GameTable, stepCount = 0) => {
     if (stepCount > maxStepCount) return;
 
     if (hasReachedAPossibleFinalState(table)) {
@@ -53,7 +53,7 @@ const steps = function* (rows: number, columns = rows) {
   }
 };
 
-export const performStep = (table: Table, step: Step) => {
+export const performStep = (table: GameTable, step: Step) => {
   const sum = getSumForStep(table, step);
 
   const newTable = table.map((row) => [...row]);
@@ -67,7 +67,7 @@ export const performStep = (table: Table, step: Step) => {
   return newTable;
 };
 
-const getSumForStep = (table: Table, step: Step) => {
+const getSumForStep = (table: GameTable, step: Step) => {
   let sum = 0;
   for (let row = step[0][0]; row <= step[1][0]; row++) {
     for (let col = step[0][1]; col <= step[1][1]; col++) {
@@ -78,5 +78,5 @@ const getSumForStep = (table: Table, step: Step) => {
   return sum;
 };
 
-const hasReachedAPossibleFinalState = (table: Table) =>
+const hasReachedAPossibleFinalState = (table: GameTable) =>
   table.flat().every((num) => num === table[0][0]);

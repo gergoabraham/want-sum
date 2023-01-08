@@ -1,5 +1,5 @@
 import { solve } from './solver';
-import { Table } from './types';
+import { GameTable } from './types';
 
 export const isStepValid = (
   startCoordinates: number[],
@@ -13,14 +13,14 @@ export const isStepValid = (
   );
 };
 
-export const isTargetReached = (table: Table, target: number) =>
+export const isTargetReached = (table: GameTable, target: number) =>
   table.flat().every((num) => num === target);
 
 export const generateRandomTableWithSolutions = (
   size: number,
   maxSteps: number
 ) => {
-  const table: Table = [];
+  const table: GameTable = [];
 
   for (let i = 0; i < size; i++) {
     table[i] = [];

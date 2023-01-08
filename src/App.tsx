@@ -9,7 +9,7 @@ import {
   isStepValid,
   isTargetReached,
 } from './core/helper';
-import { Step, Table } from './core/types';
+import { Step, GameTable } from './core/types';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -82,8 +82,8 @@ const GameStateContainer = styled.div`
 `;
 
 function App() {
-  const [initialTable, setInitialTable] = useState<Table>([]);
-  const [table, setTable] = useState<Table>([]);
+  const [initialTable, setInitialTable] = useState<GameTable>([]);
+  const [table, setTable] = useState<GameTable>([]);
   const [target, setTarget] = useState<Target>({ value: 0, minSteps: 0 });
   const [gameState, setGameState] = useState(GameState.InProgress);
 
