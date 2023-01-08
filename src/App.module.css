@@ -26,16 +26,6 @@
   font-size: 2em;
 }
 
-.cell {
-  border: 1px gray solid;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  user-select: none;
-  cursor: pointer;
-}
-
 .target {
   font-weight: 700;
 }

@@ -8,6 +8,7 @@ import {
 
 import styles from './App.module.css';
 import { useCallback } from 'react';
+import Cell from './components/Cell';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -104,7 +105,7 @@ function App() {
     event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
   ) => {
     const startElement = (event.target as HTMLElement).closest(
-      `.${styles.cell}`
+      '[data-cell="true"]'
     );
     if (!startElement) {
       return null;
@@ -132,7 +133,7 @@ function App() {
           changedTouch.clientX,
           changedTouch.clientY
         );
-        const endElement = element?.closest?.(`.${styles.cell}`);
+        const endElement = element?.closest?.('[data-cell="true"]');
 
         performStep(startCoordinates, endElement);
       };
@@ -153,7 +154,7 @@ function App() {
         window.removeEventListener('mouseup', handleMouseUp);
 
         const endElement = (event.target as HTMLElement)?.closest?.(
-          `.${styles.cell}`
+          '[data-cell="true"]'
         );
 
         performStep(startCoordinates, endElement);
@@ -197,16 +198,15 @@ function App() {
           gameState === GameState.InProgress ? handleTouchStart : undefined
         }
       >
-        {table.map((line, li) =>
-          line.map((cell, ci) => (
-            <div
-              id={`${li}-${ci}`}
-              key={`${li}-${ci}`}
-              className={styles.cell}
-              style={{ opacity: gameState !== GameState.InProgress ? 0.3 : 1 }}
-            >
-              <div>{cell}</div>
-            </div>
+        {table.map((line, rowIndex) =>
+          line.map((cellValue, columnIndex) => (
+            <Cell
+              key={`${rowIndex}-${columnIndex}`}
+              rowIndex={rowIndex}
+              columnIndex={columnIndex}
+              isDimmed={gameState !== GameState.InProgress}
+              value={cellValue}
+            />
           ))
         )}
       </div>
