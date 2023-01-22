@@ -23,7 +23,7 @@ const StyledCell = styled.div<StyledCellProps>`
   opacity: ${({ isDimmed }) => (isDimmed ? 0.3 : 1)};
 `;
 
-const Cell = ({ rowIndex, columnIndex, value, isDimmed }: CellProps) => {
+export const Cell = ({ rowIndex, columnIndex, value, isDimmed }: CellProps) => {
   return (
     <StyledCell
       id={`${rowIndex}-${columnIndex}`}
@@ -35,5 +35,3 @@ const Cell = ({ rowIndex, columnIndex, value, isDimmed }: CellProps) => {
     </StyledCell>
   );
 };
-
-export default Cell;

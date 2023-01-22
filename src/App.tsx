@@ -8,8 +8,10 @@ import {
   isStepValid,
   isTargetReached,
 } from './core/helper';
-import { Step, GameTable } from './core/types';
-import Table from './components/Table/Table';
+import { Step, GameTable, GameState } from './core/types';
+import { Table } from './components/Table';
+import { Button, FullScreenContainer, Title } from './components/UI';
+import { GameStateDisplay } from './components/GameStateDisplay';
 
 const SIZE = 2;
 const MAX_STEPS = 5;
@@ -18,27 +20,6 @@ type Target = {
   value: number;
   minSteps: number;
 };
-
-enum GameState {
-  InProgress,
-  GameOver,
-  Won,
-}
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-
-  box-sizing: border-box;
-  touch-action: none;
-`;
-
-const Title = styled.div`
-  font-size: 2em;
-  font-weight: 700;
-`;
 
 const TargetComponent = styled.div`
   font-weight: 700;
@@ -49,23 +30,6 @@ const ButtonContainer = styled.div`
   display: flex;
   gap: 5px;
   justify-content: center;
-`;
-
-const Button = styled.button`
-  height: 5em;
-  width: 5em;
-
-  font-size: 1em;
-
-  border: none;
-  background-color: lightgreen;
-
-  cursor: pointer;
-`;
-
-const GameStateContainer = styled.div`
-  font-size: 2em;
-  height: 3em;
 `;
 
 function App() {
@@ -121,7 +85,7 @@ function App() {
   };
 
   return (
-    <Container style={{ height: window.innerHeight }}>
+    <FullScreenContainer>
       <Title>want sum?</Title>
 
       <ButtonContainer>
@@ -137,11 +101,8 @@ function App() {
         onStepEntered={handleStepEntered}
       />
 
-      <GameStateContainer>
-        {gameState === GameState.Won && <div>you won</div>}
-        {gameState === GameState.GameOver && <div>you lost</div>}
-      </GameStateContainer>
-    </Container>
+      <GameStateDisplay gameState={gameState} />
+    </FullScreenContainer>
   );
 }
 

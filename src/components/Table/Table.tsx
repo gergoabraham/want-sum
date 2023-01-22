@@ -1,5 +1,5 @@
 import { GameTable } from '../../core/types';
-import Cell from './Cell';
+import { Cell } from './Cell';
 import styled from 'styled-components';
 import { useCallback } from 'react';
 
@@ -23,7 +23,7 @@ interface TableProps {
   onStepEntered: (startCoordinates: number[], endElement: number[]) => void;
 }
 
-const Table = ({ table, isDisabled, onStepEntered }: TableProps) => {
+export const Table = ({ table, isDisabled, onStepEntered }: TableProps) => {
   const getCoordinatesFromTarget = (target: HTMLElement) => {
     const element = (target as HTMLElement).closest('[data-cell="true"]');
     if (!element) {
@@ -117,5 +117,3 @@ const Table = ({ table, isDisabled, onStepEntered }: TableProps) => {
     </TableComponent>
   );
 };
-
-export default Table;
