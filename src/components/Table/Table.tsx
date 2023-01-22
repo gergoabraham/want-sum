@@ -24,20 +24,23 @@ interface TableProps {
 }
 
 const Table = ({ table, isDisabled, onStepEntered }: TableProps) => {
-  const getStartCoordinates = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
-    const startElement = (event.target as HTMLElement).closest(
-      '[data-cell="true"]'
-    );
-    if (!startElement) {
+  const getCoordinatesFromTarget = (target: HTMLElement) => {
+    const element = (target as HTMLElement).closest('[data-cell="true"]');
+    if (!element) {
       return null;
     }
 
-    const startCoordinates = startElement.id.split('-').map((x) => Number(x));
-
-    return startCoordinates;
+    return element.id.split('-').map((x) => Number(x));
   };
+
+  const getStartCoordinates = useCallback(
+    (
+      event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+    ) => {
+      return getCoordinatesFromTarget(event.target as HTMLElement);
+    },
+    []
+  );
 
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
@@ -56,20 +59,18 @@ const Table = ({ table, isDisabled, onStepEntered }: TableProps) => {
           changedTouch.clientX,
           changedTouch.clientY
         );
-        const endElement = element?.closest?.('[data-cell="true"]');
 
-        if (!endElement) {
+        const endCoordinates = getCoordinatesFromTarget(element as HTMLElement);
+        if (!endCoordinates) {
           return;
         }
-
-        const endCoordinates = endElement?.id.split('-').map((x) => Number(x));
 
         onStepEntered(startCoordinates, endCoordinates);
       };
 
       window.addEventListener('touchend', handleTouchEnd);
     },
-    [onStepEntered]
+    [getStartCoordinates, onStepEntered]
   );
 
   const handleMouseDown = useCallback(
@@ -82,22 +83,19 @@ const Table = ({ table, isDisabled, onStepEntered }: TableProps) => {
       const handleMouseUp = (event: MouseEvent) => {
         window.removeEventListener('mouseup', handleMouseUp);
 
-        const endElement = (event.target as HTMLElement)?.closest?.(
-          '[data-cell="true"]'
+        const endCoordinates = getCoordinatesFromTarget(
+          event.target as HTMLElement
         );
-
-        if (!endElement) {
+        if (!endCoordinates) {
           return;
         }
-
-        const endCoordinates = endElement?.id.split('-').map((x) => Number(x));
 
         onStepEntered(startCoordinates, endCoordinates);
       };
 
       window.addEventListener('mouseup', handleMouseUp);
     },
-    [onStepEntered]
+    [getStartCoordinates, onStepEntered]
   );
 
   return (
